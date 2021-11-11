@@ -23,15 +23,16 @@ public class CabInvoiceTest {
     }
 
     @Test
-    public void givenMultipleRides_ShouldReturnTotalFare() {
+    public void givenMultipleRides_ShouldReturnInvoiceSummery() {
         InvoiceGenerator invoiceGenerator = new InvoiceGenerator();
         Ride[] rides = {new Ride(2.0, 5),
-                new Ride(0.1, 1),
+                        new Ride(0.1, 1)
         };
-        double totalFare = invoiceGenerator.calculateFare(rides);
-        Assert.assertEquals(30.0, totalFare, 0.0);
-
+        InvoiceSummery summery = invoiceGenerator.calculateFare(rides);
+        InvoiceSummery expectedInvoiceSummery = new InvoiceSummery(2, 30.0);
+        Assert.assertEquals(expectedInvoiceSummery, summery);
     }
 }
+
 
 
