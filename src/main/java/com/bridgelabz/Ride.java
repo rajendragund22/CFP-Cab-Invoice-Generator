@@ -2,10 +2,12 @@ package com.bridgelabz;
 
 public class Ride {
     public final int time;
-    public double distance;
+    public final double distance;
+    public final InvoiceServices.RideMode rideMode;
 
-    public Ride(double distance, int time) {
+    public Ride(double distance, int time, InvoiceServices.RideMode rideMode) {
         this.distance = distance;
         this.time = time;
+        this.rideMode = rideMode;
     }
 }

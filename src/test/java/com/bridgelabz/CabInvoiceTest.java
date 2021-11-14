@@ -4,6 +4,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class CabInvoiceTest {
+    InvoiceServices invoiceService = new InvoiceServices();
+
     @Test
     public void givenDistanceAndTime_ShouldReturnTotalFare() {
         InvoiceGenerator invoiceGenerator = new InvoiceGenerator();
@@ -23,29 +25,29 @@ public class CabInvoiceTest {
     }
 
     @Test
-    public void givenMultipleRides_ShouldReturnInvoiceSummery() {
-        InvoiceGenerator invoiceGenerator = new InvoiceGenerator();
-        Ride[] rides = {new Ride(2.0, 5),
-                        new Ride(0.1, 1)
+    public void givenMultipleRide_ShouldReturnPremiumTotalFare() {
+        Ride[] rides = {new Ride(2.0, 5, InvoiceServices.RideMode.PREMIUM),
+                new Ride(0.1, 1, InvoiceServices.RideMode.PREMIUM),
         };
-        InvoiceSummery summery = invoiceGenerator.calculateFare(rides);
-        InvoiceSummery expectedInvoiceSummery = new InvoiceSummery(2, 30.0);
-        Assert.assertEquals(expectedInvoiceSummery, summery);
+        InvoiceSummary summary = invoiceService.calculateFareForNormal(rides);
+        InvoiceSummary expectedInvoiceSummary = new InvoiceSummary(2, 50);
+        Assert.assertEquals(expectedInvoiceSummary, summary);
     }
+
     @Test
-    public void givenUserId_ShouldReturnInvoiceSummary() throws InvoiceGeneratorException {
-        InvoiceGenerator invoiceGenerator = new InvoiceGenerator();
+    public void givenUserIdAndRides_ShouldReturnBothInvoiceSummary() throws InvoiceGeneratorException {
         String[] userId = {"user1", "user2", "user3"};
-        Ride[][] rides ={
-                {new Ride(5.0, 12), new Ride(2.5, 6)},
-                {new Ride(3.0, 5), new Ride(0.01, 1)},
-                {new Ride(10.0, 15), new Ride(2, 30)} };
-        invoiceGenerator.addRideToRepositoy(userId, rides);
-        InvoiceSummery summery = invoiceGenerator.invoiceForUser(userId[2]);
-        InvoiceSummery expectedInvoiceSummery = new InvoiceSummery(rides[2].length, 165.0);
-        Assert.assertEquals(expectedInvoiceSummery, summery);
+        Ride[][] rides = {
+                {new Ride(5.0, 12, InvoiceServices.RideMode.NORMAL), new Ride(2.5, 6, InvoiceServices.RideMode.PREMIUM)},
+                {new Ride(3.0, 5, InvoiceServices.RideMode.PREMIUM), new Ride(0.01, 1, InvoiceServices.RideMode.NORMAL)},
+                {new Ride(10.0, 15, InvoiceServices.RideMode.NORMAL), new Ride(2, 30, InvoiceServices.RideMode.PREMIUM)}};
+        invoiceService.addRides(userId, rides);
+        InvoiceSummary summary = invoiceService.getInvoiceSummary(userId);
+        InvoiceSummary expectedInvoiceSummary = new InvoiceSummary(2, 111.5);
+        Assert.assertEquals(expectedInvoiceSummary, summary);
     }
 }
+
 
 
 
